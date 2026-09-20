@@ -2,10 +2,10 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Custom CSS for Brighter Themes, Square Buttons & Colored Selections
+# Custom CSS with Super Sized & Ultra Bold Letters
 custom_css = """
 <style>
-/* Main Dark Background with Brightened Contrast */
+/* Main Background */
 .stApp {
     background: linear-gradient(135deg, #181a26 0%, #222638 50%, #2a2d42 100%);
     font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
@@ -43,16 +43,15 @@ custom_css = """
 /* Base Square Button Styling */
 div[data-testid="stButton"] > button {
     width: 100% !important;
-    height: 110px !important;
-    max-height: 110px !important;
-    font-size: 3.5em !important;
-    font-weight: 900 !important;
+    height: 120px !important;
+    max-height: 120px !important;
     border-radius: 18px !important;
     border: 3px solid #4a4e69 !important;
     background-color: #2b2e4a !important;
     color: #ffffff !important;
     box-shadow: 0 5px 0px #1a1c2e, 0 8px 15px rgba(0,0,0,0.4) !important;
     transition: all 0.15s ease-in-out !important;
+    padding: 0 !important;
 }
 
 div[data-testid="stButton"] > button:hover {
@@ -60,22 +59,40 @@ div[data-testid="stButton"] > button:hover {
     background-color: #3b3e5e !important;
 }
 
-/* Pink O Background Styling (User Selection) */
+/* Override text element inside Streamlit button for HUGE bold display */
+div[data-testid="stButton"] button p {
+    font-size: 6.5rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-text-stroke: 3px black; /* Bold dark outline for maximum pop */
+}
+
+/* Pink O Tile Styling (User Selection) */
 div.pink-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #ffb6c1 !important;
     border-color: #ff69b4 !important;
-    color: #8b0046 !important;
     opacity: 1 !important;
-    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.6) !important;
+    box-shadow: 0px 0px 20px rgba(255, 105, 180, 0.8) !important;
+}
+div.pink-tile > div[data-testid="stButton"] button p {
+    color: #8b0046 !important;
+    -webkit-text-stroke: 2px #ff1493 !important;
+    text-shadow: 0px 0px 15px #ff1493 !important;
 }
 
-/* Blue X Background Styling (Bot Selection) */
+/* Blue X Tile Styling (Bot Selection) */
 div.blue-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #89cff0 !important;
     border-color: #00bfff !important;
-    color: #003366 !important;
     opacity: 1 !important;
-    box-shadow: 0px 0px 15px rgba(0, 191, 255, 0.6) !important;
+    box-shadow: 0px 0px 20px rgba(0, 191, 255, 0.8) !important;
+}
+div.blue-tile > div[data-testid="stButton"] button p {
+    color: #002b5c !important;
+    -webkit-text-stroke: 2px #00bfff !important;
+    text-shadow: 0px 0px 15px #00bfff !important;
 }
 </style>
 """
@@ -121,7 +138,7 @@ def get_rigged_bot_move(board):
         if marks.count("O") == 2 and marks.count("") == 1:
             return combo[marks.index("")]
 
-    # 3. Prefer strategic spots (center, corners)
+    # 3. Prefer strategic spots
     for preferred in [4, 0, 2, 6, 8, 1, 3, 5, 7]:
         if board[preferred] == "":
             return preferred
