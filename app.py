@@ -95,19 +95,29 @@ div.blue-tile > div[data-testid="stButton"] button p {
     text-shadow: 0px 0px 15px #00bfff !important;
 }
 
-/* NORMAL STYLING FOR RESET BUTTON */
+/* SMALL & COMPACT RESET BUTTON STYLING */
+div.reset-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+div.reset-btn > div[data-testid="stButton"] {
+    width: auto !important;
+}
+
 div.reset-btn > div[data-testid="stButton"] > button {
-    width: 100% !important;
-    height: auto !important;
-    padding: 12px 24px !important;
-    border-radius: 12px !important;
+    width: auto !important;
+    height: 42px !important;
+    padding: 6px 18px !important;
+    border-radius: 10px !important;
     background-color: #ffb6c1 !important;
     border: 2px solid #ff69b4 !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
 }
 
 div.reset-btn > div[data-testid="stButton"] button p {
-    font-size: 1.3rem !important;
+    font-size: 0.95rem !important;
     font-weight: bold !important;
     color: #5c002e !important;
     -webkit-text-stroke: 0px !important;
@@ -177,7 +187,7 @@ def handle_click(idx):
         st.session_state.game_over = True
         st.session_state.status_msg = "🎉 It's a Boy! 💙 Our little bucket of sunshine is arriving! 🍼"
 
-# Grid Rendering with Isolated Grid Wrapper
+# Grid Rendering
 _, center_col, _ = st.columns([1, 3, 1])
 
 with center_col:
@@ -208,7 +218,7 @@ if st.session_state.game_over:
 else:
     st.info(st.session_state.status_msg)
 
-# Reset Button Wrapped in Normal Button Styling
+# Small & Compact Play Again Button
 st.markdown("<div class='reset-btn'>", unsafe_allow_html=True)
 if st.button("🔄 Play Again 🧸", type="primary"):
     st.session_state.board = [""] * 9
