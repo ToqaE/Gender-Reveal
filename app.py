@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Mobile Grid-Forcing CSS
+# CSS to enforce perfect square buttons and mobile layout
 custom_css = """
 <style>
 /* App Background */
@@ -12,7 +12,7 @@ custom_css = """
     color: #ffffff;
 }
 
-/* Remove Extra Mobile Padding & Lock Container Width */
+/* Remove Extra Mobile Padding & Center Page Content */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
@@ -45,26 +45,32 @@ custom_css = """
     margin-bottom: 4px;
 }
 
-/* FORCE STREAMLIT COLUMNS TO REMAIN HORIZONTAL ON MOBILE */
+/* FORCE HORIZONTAL ROW LAYOUT ON MOBILE */
 div[data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
+    justify-content: center !important;
     gap: 6px !important;
+    margin-bottom: 6px !important;
 }
 
 div[data-testid="column"] {
-    width: 33.33% !important;
-    min-width: 33.33% !important;
-    flex: 1 1 33.33% !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    flex: 0 0 80px !important;
     padding: 0 !important;
 }
 
-/* Ultra Compact Square Styling */
+/* FORCE EQUAL HEIGHT & WIDTH FOR PERFECT SQUARES */
 div[data-testid="stButton"] > button {
-    width: 100% !important;
-    height: 75px !important;
-    max-height: 75px !important;
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+    max-width: 80px !important;
+    max-height: 80px !important;
     border-radius: 12px !important;
     border: 2px solid #4a4e69 !important;
     background-color: #2b2e4a !important;
@@ -130,9 +136,11 @@ div.reset-btn > div[data-testid="stButton"] {
 
 div.reset-btn > div[data-testid="stButton"] > button {
     width: auto !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    padding: 2px 14px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 2px 16px !important;
     border-radius: 8px !important;
     background-color: #ffb6c1 !important;
     border: 1px solid #ff69b4 !important;
@@ -140,7 +148,7 @@ div.reset-btn > div[data-testid="stButton"] > button {
 }
 
 div.reset-btn > div[data-testid="stButton"] button p {
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;
     font-weight: bold !important;
     color: #5c002e !important;
     -webkit-text-stroke: 0px !important;
