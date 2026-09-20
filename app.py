@@ -1,4 +1,4 @@
-import gradio as gr
+import streamlit as st
 
 # Custom CSS for the Gender Reveal theme (Colors, Balloons, Tiaras, Stars)
 custom_css = """
