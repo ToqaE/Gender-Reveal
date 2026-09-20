@@ -2,10 +2,10 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Custom CSS targeting grid buttons separately from the Reset button
+# Custom CSS for UI Layout, Squares, Giant Text, and Selections
 custom_css = """
 <style>
-/* Main Background */
+/* App Background */
 .stApp {
     background: linear-gradient(135deg, #181a26 0%, #222638 50%, #2a2d42 100%);
     font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
@@ -35,16 +35,21 @@ custom_css = """
     margin-bottom: 10px;
 }
 
-/* Compact Grid Columns */
-[data-testid="column"] {
-    padding: 0px 4px !important;
+/* Grid Layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 380px;
+    margin: 0 auto 20px auto;
 }
 
-/* GRID-ONLY BUTTON STYLING */
-div.grid-button > div[data-testid="stButton"] > button {
+/* Base Square Styling */
+div[data-testid="stButton"] > button {
     width: 100% !important;
-    height: 120px !important;
-    max-height: 120px !important;
+    aspect-ratio: 1 / 1 !important;
+    height: auto !important;
+    min-height: 110px !important;
     border-radius: 18px !important;
     border: 3px solid #4a4e69 !important;
     background-color: #2b2e4a !important;
@@ -54,22 +59,25 @@ div.grid-button > div[data-testid="stButton"] > button {
     padding: 0 !important;
 }
 
-div.grid-button > div[data-testid="stButton"] > button:hover {
+div[data-testid="stButton"] > button:hover:not(:disabled) {
     border-color: #ffb6c1 !important;
     background-color: #3b3e5e !important;
+    transform: translateY(-2px);
 }
 
-/* Apply HUGE text ONLY to Grid Buttons */
-div.grid-button > div[data-testid="stButton"] button p {
-    font-size: 5.5rem !important;
+/* Letter Text Inside Grid */
+div.grid-cell > div[data-testid="stButton"] button p {
+    font-size: 4.5rem !important;
     font-weight: 900 !important;
     line-height: 1 !important;
     margin: 0 !important;
     padding: 0 !important;
-    -webkit-text-stroke: 3px black;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-/* Pink O Tile Styling (User Selection) */
+/* Pink O Selection */
 div.pink-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #ffb6c1 !important;
     border-color: #ff69b4 !important;
@@ -79,10 +87,10 @@ div.pink-tile > div[data-testid="stButton"] > button:disabled {
 div.pink-tile > div[data-testid="stButton"] button p {
     color: #8b0046 !important;
     -webkit-text-stroke: 2px #ff1493 !important;
-    text-shadow: 0px 0px 15px #ff1493 !important;
+    text-shadow: 0px 0px 12px #ff1493 !important;
 }
 
-/* Blue X Tile Styling (Bot Selection) */
+/* Blue X Selection */
 div.blue-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #89cff0 !important;
     border-color: #00bfff !important;
@@ -92,10 +100,10 @@ div.blue-tile > div[data-testid="stButton"] > button:disabled {
 div.blue-tile > div[data-testid="stButton"] button p {
     color: #002b5c !important;
     -webkit-text-stroke: 2px #00bfff !important;
-    text-shadow: 0px 0px 15px #00bfff !important;
+    text-shadow: 0px 0px 12px #00bfff !important;
 }
 
-/* SMALL & COMPACT RESET BUTTON STYLING */
+/* Compact Reset Button */
 div.reset-btn {
     display: flex;
     justify-content: center;
@@ -108,16 +116,18 @@ div.reset-btn > div[data-testid="stButton"] {
 
 div.reset-btn > div[data-testid="stButton"] > button {
     width: auto !important;
-    height: 42px !important;
-    padding: 6px 18px !important;
-    border-radius: 10px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    aspect-ratio: auto !important;
+    padding: 6px 20px !important;
+    border-radius: 12px !important;
     background-color: #ffb6c1 !important;
     border: 2px solid #ff69b4 !important;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3) !important;
 }
 
 div.reset-btn > div[data-testid="stButton"] button p {
-    font-size: 0.95rem !important;
+    font-size: 1rem !important;
     font-weight: bold !important;
     color: #5c002e !important;
     -webkit-text-stroke: 0px !important;
@@ -200,7 +210,7 @@ with center_col:
             tile_class = "pink-tile" if cell_val == "O" else ("blue-tile" if cell_val == "X" else "")
             
             with cols[col]:
-                st.markdown(f"<div class='grid-button {tile_class}'>", unsafe_allow_html=True)
+                st.markdown(f"<div class='grid-cell {tile_class}'>", unsafe_allow_html=True)
                 st.button(
                     cell_val if cell_val != "" else " ",
                     key=f"btn_{idx}",
