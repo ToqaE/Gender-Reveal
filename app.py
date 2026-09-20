@@ -3,8 +3,8 @@ import random
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Custom CSS for Dark Baby-Cartoon Theme with Square Grid and Giant Neon Colors
-dark_baby_css = """
+# Custom CSS for Dark Theme, Smaller Centered Grid & Giant Styled Letters
+custom_css = """
 <style>
 /* Main Dark Background */
 .stApp {
@@ -25,10 +25,9 @@ dark_baby_css = """
 
 .sub-text {
     text-align: center;
-    color: #89cff0;
-    font-size: 1.2em;
+    font-size: 1.3em;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .decorations {
@@ -38,27 +37,30 @@ dark_baby_css = """
     filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.6));
 }
 
-/* Force Square Buttons with Giant Fonts */
+/* Restrain overall grid width so squares aren't massive */
+[data-testid="column"] {
+    padding: 0px 4px !important;
+}
+
+/* Button Styling: Compact Square Fields & Massive Text */
 div[data-testid="stButton"] > button {
     width: 100% !important;
-    aspect-ratio: 1 / 1 !important;  /* Enforces perfect square shape */
-    height: auto !important;
-    font-size: 4em !important;        /* Extra large X and O */
-    font-weight: bold !important;
-    border-radius: 20px !important;
+    height: 110px !important;            /* Smaller, compact height */
+    max-height: 110px !important;
+    font-size: 3.5em !important;          /* Enormous letter sizing */
+    font-weight: 900 !important;
+    border-radius: 18px !important;
     border: 3px solid #ffb6c1 !important;
     background-color: #191b2d !important;
-    box-shadow: 0 6px 0px #0b0c16, 0 10px 20px rgba(0,0,0,0.6) !important;
+    box-shadow: 0 5px 0px #0b0c16, 0 8px 15px rgba(0,0,0,0.6) !important;
     transition: all 0.15s ease-in-out !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    line-height: 1 !important;
 }
 
 div[data-testid="stButton"] > button:hover {
     border-color: #89cff0 !important;
     background-color: #252840 !important;
-    transform: translateY(-3px) !important;
+    transform: translateY(-2px) !important;
 }
 
 div[data-testid="stButton"] > button:disabled {
@@ -66,14 +68,26 @@ div[data-testid="stButton"] > button:disabled {
     border-color: #383b56 !important;
     box-shadow: none !important;
 }
+
+/* Pink O Color */
+.pink-o {
+    color: #FF69B4 !important;
+    font-weight: 900;
+}
+
+/* Blue X Color */
+.blue-x {
+    color: #00BFFF !important;
+    font-weight: 900;
+}
 </style>
 """
-st.markdown(dark_baby_css, unsafe_allow_html=True)
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # Header Section
 st.markdown("<div class='decorations'>🍼 🧸 💖 💙 🚼 ✨ 🐥 🧷</div>", unsafe_allow_html=True)
 st.markdown("<h1 class='title-text'>Play to Reveal the Secret Baby! 👶</h1>", unsafe_allow_html=True)
-st.markdown("<div class='sub-text'>You are Pink ⭕ vs Bot Blue ❌</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-text'>You are <span style='color:#FF69B4;'>Pink O</span> vs Bot <span style='color:#00BFFF;'>Blue X</span></div>", unsafe_allow_html=True)
 
 # Initialize Session State
 if "board" not in st.session_state:
@@ -81,7 +95,7 @@ if "board" not in st.session_state:
 if "game_over" not in st.session_state:
     st.session_state.game_over = False
 if "status_msg" not in st.session_state:
-    st.session_state.status_msg = "Your turn! Click an empty square to place ⭕"
+    st.session_state.status_msg = "Your turn! Click an empty box to place O"
 
 # Helper Function: Check Win
 def check_winner(board, mark):
@@ -95,16 +109,16 @@ def check_winner(board, mark):
             return True
     return False
 
-# Handle Player Click (Player is Pink O)
+# Handle Player Click (Player is O)
 def handle_click(idx):
     if st.session_state.board[idx] != "" or st.session_state.game_over:
         return
 
-    # 1. Place Player's Pink O
-    st.session_state.board[idx] = "🌸⭕"
+    # 1. Place Player's O
+    st.session_state.board[idx] = "O"
 
     # Check if Player Won
-    if check_winner(st.session_state.board, "🌸⭕"):
+    if check_winner(st.session_state.board, "O"):
         st.session_state.game_over = True
         st.session_state.status_msg = "🎉 It's a Boy! 💙 Our little bucket of sunshine is arriving! 🍼"
         return
@@ -116,26 +130,30 @@ def handle_click(idx):
         st.session_state.status_msg = "It's a tie! 🧸 Reset the board to try again! ✨"
         return
 
-    # 2. Bot Move: Place Blue X
+    # 2. Bot Move: Place X
     bot_choice = random.choice(empty_indices)
-    st.session_state.board[bot_choice] = "🚙❌"
+    st.session_state.board[bot_choice] = "X"
 
     # Check if Bot Won
-    if check_winner(st.session_state.board, "🚙❌"):
+    if check_winner(st.session_state.board, "X"):
         st.session_state.game_over = True
         st.session_state.status_msg = "🎉 It's a Boy! 💙 Our little bundle of joy is arriving! 🚼"
 
-# Render Square Grid
-grid_container = st.container()
-with grid_container:
+# Center and constrain grid width
+_, center_col, _ = st.columns([1, 3, 1])
+
+with center_col:
     for row in range(3):
-        cols = st.columns(3, gap="small")
+        cols = st.columns(3)
         for col in range(3):
             idx = row * 3 + col
             cell_val = st.session_state.board[idx]
             
+            # Display plain X or O without surrounding emojis
+            display_char = cell_val if cell_val != "" else " "
+            
             cols[col].button(
-                cell_val if cell_val != "" else " ",
+                display_char,
                 key=f"btn_{idx}",
                 on_click=handle_click,
                 args=(idx,),
@@ -156,5 +174,5 @@ else:
 if st.button("🔄 Play Again 🧸", type="primary"):
     st.session_state.board = [""] * 9
     st.session_state.game_over = False
-    st.session_state.status_msg = "Your turn! Click an empty square to place ⭕"
+    st.session_state.status_msg = "Your turn! Click an empty box to place O"
     st.rerun()
