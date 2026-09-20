@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Mobile-Ultra Compact CSS
+# Mobile Grid-Forcing CSS
 custom_css = """
 <style>
 /* App Background */
@@ -12,7 +12,7 @@ custom_css = """
     color: #ffffff;
 }
 
-/* Remove Extra Mobile Margins */
+/* Remove Extra Mobile Padding & Lock Container Width */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
@@ -34,7 +34,7 @@ custom_css = """
 
 .sub-text {
     text-align: center;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-weight: bold;
     margin-bottom: 10px;
 }
@@ -45,9 +45,19 @@ custom_css = """
     margin-bottom: 4px;
 }
 
-/* Tight Column Spacing */
-[data-testid="column"] {
-    padding: 0px 2px !important;
+/* FORCE STREAMLIT COLUMNS TO REMAIN HORIZONTAL ON MOBILE */
+div[data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+}
+
+div[data-testid="column"] {
+    width: 33.33% !important;
+    min-width: 33.33% !important;
+    flex: 1 1 33.33% !important;
+    padding: 0 !important;
 }
 
 /* Ultra Compact Square Styling */
@@ -69,9 +79,9 @@ div[data-testid="stButton"] > button:hover:not(:disabled) {
     background-color: #3b3e5e !important;
 }
 
-/* Scaled Down Letters */
+/* Scaled Down Bold Letters */
 div.grid-cell > div[data-testid="stButton"] button p {
-    font-size: 2.4rem !important;
+    font-size: 2.2rem !important;
     font-weight: 900 !important;
     line-height: 1 !important;
     margin: 0 !important;
