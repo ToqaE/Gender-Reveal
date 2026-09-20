@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Custom CSS with Super Sized & Ultra Bold Letters
+# Custom CSS targeting grid buttons separately from the Reset button
 custom_css = """
 <style>
 /* Main Background */
@@ -40,8 +40,8 @@ custom_css = """
     padding: 0px 4px !important;
 }
 
-/* Base Square Button Styling */
-div[data-testid="stButton"] > button {
+/* GRID-ONLY BUTTON STYLING */
+div.grid-button > div[data-testid="stButton"] > button {
     width: 100% !important;
     height: 120px !important;
     max-height: 120px !important;
@@ -54,19 +54,19 @@ div[data-testid="stButton"] > button {
     padding: 0 !important;
 }
 
-div[data-testid="stButton"] > button:hover {
+div.grid-button > div[data-testid="stButton"] > button:hover {
     border-color: #ffb6c1 !important;
     background-color: #3b3e5e !important;
 }
 
-/* Override text element inside Streamlit button for HUGE bold display */
-div[data-testid="stButton"] button p {
-    font-size: 6.5rem !important;
+/* Apply HUGE text ONLY to Grid Buttons */
+div.grid-button > div[data-testid="stButton"] button p {
+    font-size: 5.5rem !important;
     font-weight: 900 !important;
     line-height: 1 !important;
     margin: 0 !important;
     padding: 0 !important;
-    -webkit-text-stroke: 3px black; /* Bold dark outline for maximum pop */
+    -webkit-text-stroke: 3px black;
 }
 
 /* Pink O Tile Styling (User Selection) */
@@ -93,6 +93,25 @@ div.blue-tile > div[data-testid="stButton"] button p {
     color: #002b5c !important;
     -webkit-text-stroke: 2px #00bfff !important;
     text-shadow: 0px 0px 15px #00bfff !important;
+}
+
+/* NORMAL STYLING FOR RESET BUTTON */
+div.reset-btn > div[data-testid="stButton"] > button {
+    width: 100% !important;
+    height: auto !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    background-color: #ffb6c1 !important;
+    border: 2px solid #ff69b4 !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+}
+
+div.reset-btn > div[data-testid="stButton"] button p {
+    font-size: 1.3rem !important;
+    font-weight: bold !important;
+    color: #5c002e !important;
+    -webkit-text-stroke: 0px !important;
+    text-shadow: none !important;
 }
 </style>
 """
@@ -126,19 +145,16 @@ def check_winner(board, mark):
 
 # Rigged Bot Logic: Guarantees Blue X Wins
 def get_rigged_bot_move(board):
-    # 1. Take immediate winning move for X if available
     for combo in WIN_COMBOS:
         marks = [board[i] for i in combo]
         if marks.count("X") == 2 and marks.count("") == 1:
             return combo[marks.index("")]
 
-    # 2. Block O if O is about to win (prevents O from winning)
     for combo in WIN_COMBOS:
         marks = [board[i] for i in combo]
         if marks.count("O") == 2 and marks.count("") == 1:
             return combo[marks.index("")]
 
-    # 3. Prefer strategic spots
     for preferred in [4, 0, 2, 6, 8, 1, 3, 5, 7]:
         if board[preferred] == "":
             return preferred
@@ -149,22 +165,19 @@ def handle_click(idx):
     if st.session_state.board[idx] != "" or st.session_state.game_over:
         return
 
-    # 1. Place Player's O
     st.session_state.board[idx] = "O"
 
-    # 2. Trigger Rigged Bot Move (Blue X)
     empty_indices = [i for i, cell in enumerate(st.session_state.board) if cell == ""]
     if empty_indices:
         bot_choice = get_rigged_bot_move(st.session_state.board)
         if bot_choice is not None:
             st.session_state.board[bot_choice] = "X"
 
-    # 3. Check if X Wins (Only X triggers the reveal)
     if check_winner(st.session_state.board, "X"):
         st.session_state.game_over = True
         st.session_state.status_msg = "🎉 It's a Boy! 💙 Our little bucket of sunshine is arriving! 🍼"
 
-# Grid Rendering with Colored Container Wrappers
+# Grid Rendering with Isolated Grid Wrapper
 _, center_col, _ = st.columns([1, 3, 1])
 
 with center_col:
@@ -174,11 +187,10 @@ with center_col:
             idx = row * 3 + col
             cell_val = st.session_state.board[idx]
             
-            # Apply dynamic class based on selection
             tile_class = "pink-tile" if cell_val == "O" else ("blue-tile" if cell_val == "X" else "")
             
             with cols[col]:
-                st.markdown(f"<div class='{tile_class}'>", unsafe_allow_html=True)
+                st.markdown(f"<div class='grid-button {tile_class}'>", unsafe_allow_html=True)
                 st.button(
                     cell_val if cell_val != "" else " ",
                     key=f"btn_{idx}",
@@ -196,9 +208,11 @@ if st.session_state.game_over:
 else:
     st.info(st.session_state.status_msg)
 
-# Reset Button
+# Reset Button Wrapped in Normal Button Styling
+st.markdown("<div class='reset-btn'>", unsafe_allow_html=True)
 if st.button("🔄 Play Again 🧸", type="primary"):
     st.session_state.board = [""] * 9
     st.session_state.game_over = False
     st.session_state.status_msg = "Your turn! Click an empty square to place O"
     st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
