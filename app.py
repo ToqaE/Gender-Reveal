@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Baby Gender Reveal Game", page_icon="🚼", layout="centered")
 
-# Custom CSS for UI Layout, Squares, Giant Text, and Selections
+# Custom CSS Mobile-First Responsive Adjustments
 custom_css = """
 <style>
 /* App Background */
@@ -12,11 +12,11 @@ custom_css = """
     color: #ffffff;
 }
 
-/* Header Styling */
+/* Responsive Header Styling */
 .title-text {
     text-align: center;
     color: #ffb6c1;
-    font-size: 2.2em;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
     font-weight: 900;
     text-shadow: 2px 2px 0px #000, 4px 4px 10px rgba(255, 182, 193, 0.5);
     margin-bottom: 5px;
@@ -24,37 +24,41 @@ custom_css = """
 
 .sub-text {
     text-align: center;
-    font-size: 1.3em;
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .decorations {
     text-align: center;
-    font-size: 2.2em;
-    margin-bottom: 10px;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    margin-bottom: 8px;
 }
 
-/* Grid Layout */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    max-width: 380px;
-    margin: 0 auto 20px auto;
+/* Reduce Streamlit default padding for mobile screens */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
 }
 
-/* Base Square Styling */
+[data-testid="column"] {
+    padding: 0px 2px !important;
+}
+
+/* Base Square Styling (Scales with screen size) */
 div[data-testid="stButton"] > button {
     width: 100% !important;
     aspect-ratio: 1 / 1 !important;
     height: auto !important;
-    min-height: 110px !important;
-    border-radius: 18px !important;
-    border: 3px solid #4a4e69 !important;
+    min-height: unset !important;
+    max-height: 110px !important;
+    border-radius: 14px !important;
+    border: 2px solid #4a4e69 !important;
     background-color: #2b2e4a !important;
     color: #ffffff !important;
-    box-shadow: 0 5px 0px #1a1c2e, 0 8px 15px rgba(0,0,0,0.4) !important;
+    box-shadow: 0 4px 0px #1a1c2e, 0 6px 12px rgba(0,0,0,0.4) !important;
     transition: all 0.15s ease-in-out !important;
     padding: 0 !important;
 }
@@ -62,12 +66,11 @@ div[data-testid="stButton"] > button {
 div[data-testid="stButton"] > button:hover:not(:disabled) {
     border-color: #ffb6c1 !important;
     background-color: #3b3e5e !important;
-    transform: translateY(-2px);
 }
 
-/* Letter Text Inside Grid */
+/* Responsive Letter Text inside Grid */
 div.grid-cell > div[data-testid="stButton"] button p {
-    font-size: 4.5rem !important;
+    font-size: clamp(2.5rem, 12vw, 4.5rem) !important;
     font-weight: 900 !important;
     line-height: 1 !important;
     margin: 0 !important;
@@ -82,12 +85,12 @@ div.pink-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #ffb6c1 !important;
     border-color: #ff69b4 !important;
     opacity: 1 !important;
-    box-shadow: 0px 0px 20px rgba(255, 105, 180, 0.8) !important;
+    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.8) !important;
 }
 div.pink-tile > div[data-testid="stButton"] button p {
     color: #8b0046 !important;
-    -webkit-text-stroke: 2px #ff1493 !important;
-    text-shadow: 0px 0px 12px #ff1493 !important;
+    -webkit-text-stroke: 1.5px #ff1493 !important;
+    text-shadow: 0px 0px 10px #ff1493 !important;
 }
 
 /* Blue X Selection */
@@ -95,12 +98,12 @@ div.blue-tile > div[data-testid="stButton"] > button:disabled {
     background-color: #89cff0 !important;
     border-color: #00bfff !important;
     opacity: 1 !important;
-    box-shadow: 0px 0px 20px rgba(0, 191, 255, 0.8) !important;
+    box-shadow: 0px 0px 15px rgba(0, 191, 255, 0.8) !important;
 }
 div.blue-tile > div[data-testid="stButton"] button p {
     color: #002b5c !important;
-    -webkit-text-stroke: 2px #00bfff !important;
-    text-shadow: 0px 0px 12px #00bfff !important;
+    -webkit-text-stroke: 1.5px #00bfff !important;
+    text-shadow: 0px 0px 10px #00bfff !important;
 }
 
 /* Compact Reset Button */
@@ -116,18 +119,18 @@ div.reset-btn > div[data-testid="stButton"] {
 
 div.reset-btn > div[data-testid="stButton"] > button {
     width: auto !important;
-    height: 40px !important;
-    min-height: 40px !important;
+    height: 38px !important;
+    min-height: 38px !important;
     aspect-ratio: auto !important;
-    padding: 6px 20px !important;
-    border-radius: 12px !important;
+    padding: 4px 16px !important;
+    border-radius: 10px !important;
     background-color: #ffb6c1 !important;
     border: 2px solid #ff69b4 !important;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
 }
 
 div.reset-btn > div[data-testid="stButton"] button p {
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     font-weight: bold !important;
     color: #5c002e !important;
     -webkit-text-stroke: 0px !important;
@@ -198,7 +201,7 @@ def handle_click(idx):
         st.session_state.status_msg = "🎉 It's a Boy! 💙 Our little bucket of sunshine is arriving! 🍼"
 
 # Grid Rendering
-_, center_col, _ = st.columns([1, 3, 1])
+_, center_col, _ = st.columns([0.1, 9.8, 0.1])
 
 with center_col:
     for row in range(3):
